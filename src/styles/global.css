@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: linear-gradient(to right, #18191A, #242526, #18191A);
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.blue_gradient {
+  @apply bg-gradient-to-r from-[#adc6ff] to-[#adc6ff] bg-clip-text text-transparent;
+}
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px; /* Đảm bảo độ rộng của khung */
+  height: auto; /* Tự động dựa vào nội dung */
+  cursor: pointer; /* Biểu tượng chuột thay đổi khi hover */
+  border: 1px solid red; /* Khung viền để dễ kiểm tra */
+  padding: 10px;
+  border-radius: 10px; /* Làm khung mềm mại hơn */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.story-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover; /* Đảm bảo ảnh không bị méo */
+  border-radius: 8px; /* Căn chỉnh hình ảnh mềm mại hơn */
+}
+
+.story-item h3 {
+  margin: 10px 0 0; /* Khoảng cách giữa ảnh và tiêu đề */
+  text-align: center; /* Căn giữa tiêu đề */
+  font-size: 14px;
+}
+
+.btn-category {
+  @apply py-5 px-4 rounded-lg text-center transition duration-300 font-bold;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
