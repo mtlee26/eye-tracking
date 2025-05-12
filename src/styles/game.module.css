@@ -1,0 +1,90 @@
+@font-face {
+  font-family: Minecraft;
+  src: url("../../public/fonts/Minecraft.ttf");
+}
+
+.container {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  filter: blur(200px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.gameContainer {
+  width: 80vw;
+  height: 90vh;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iframeGame {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  border: none;
+}
+
+.listContainer {
+  top: 20px;
+  width: auto;
+  height: auto;
+  padding: 20px;
+}
+
+.gameContainer,
+.listContainer {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.gameContainer .gameCard,
+.listContainer {
+  background: rgba(255, 255, 255, 0.2);
+  /* padding: 16px; */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: white;
+  text-align: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.titleContainer {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: Minecraft, sans-serif;
+  font-size: 5rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
