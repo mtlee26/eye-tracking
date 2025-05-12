@@ -1,0 +1,14 @@
+body {
+  font-family: Minecraft, "Courier New", Courier, monospace;
+  text-align: center;
+}
+
+#board {
+  /* background-color: skyblue; */
+  background-image: url("./flappybirdbg.png");
+}
+
+@font-face {
+  font-family: Minecraft;
+  src: url("./Minecraft.ttf");
+}
