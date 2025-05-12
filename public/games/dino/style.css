@@ -1,0 +1,158 @@
+@font-face {
+  font-family: Minecraft;
+  src: url("./assets/Minecraft.ttf");
+}
+
+.game-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  /* margin: 20px auto; */
+  border: 1px solid;
+  padding-top: 53%;
+  position: relative;
+  overflow: hidden;
+  background-image: url("./assets/sky.png");
+  background-size: contain;
+  animation: bg-move 30s linear infinite;
+}
+
+@keyframes bg-move {
+  0% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: -50%;
+  }
+}
+
+.player {
+  width: 16vw;
+  height: 16vh;
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  background-image: url("./assets/dino.gif");
+  background-size: cover;
+  background-position: bottom;
+}
+
+.player.jump {
+  animation: jump 1.5s infinite;
+  background-image: url("./assets/dino.png");
+}
+
+@keyframes jump {
+  0% {
+    bottom: 0;
+  }
+
+  25% {
+    bottom: 46.5vh;
+  }
+  40% {
+    bottom: 46.5vh;
+  }
+
+  100% {
+    bottom: 0;
+  }
+}
+
+.obstacle {
+  width: 6vw;
+  height: 22.3vh;
+  position: absolute;
+  bottom: 0;
+  left: 80%;
+  animation: move 3s linear infinite;
+  background-image: url("./assets/obstacle.png");
+  background-size: contain;
+}
+
+.obstacle-xs {
+  width: 3vw;
+  height: 13vh;
+}
+.obstacle-s {
+  width: 6vw;
+  height: 14.9vh;
+}
+.obstacle-m {
+  width: 9vw;
+  height: 16.75vh;
+}
+.obstacle-l {
+  width: 12vw;
+  height: 22.32vh;
+}
+
+@keyframes move {
+  0% {
+    left: 100%;
+  }
+  100% {
+    left: -100px;
+  }
+}
+
+.score-card {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #fff;
+  font-family: Minecraft;
+  font-size: 50px;
+}
+
+.score-card span {
+  margin-right: 20px;
+}
+
+.restart-game {
+  visibility: hidden;
+  font-family: Minecraft;
+  background-color: #ffffffb8;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  z-index: 2;
+}
+
+.restart-game.show {
+  visibility: visible;
+}
+
+.restart-game .content {
+  display: flex;
+}
+
+.restart-game .btn-reset-game {
+  border: none;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-image: url("./assets/restart.png");
+  background-size: contain;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.restart-game .text {
+  align-self: end;
+}
+
+.stop.game-container,
+.stop .obstacle {
+  animation-play-state: paused;
+}
+
+.stop .player {
+  background-image: url("./assets/dino.png");
+}
