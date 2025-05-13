@@ -7,6 +7,7 @@ import GazeButton from "@/component/gazeButton";
 import { AiOutlineLeft } from "react-icons/ai";
 import { GazeScrollButton } from "@/component/gazeScrollButton";
 import AutoScrollToggle from "@/component/autoScrollButton";
+import SpeakButton from "@/component/speakButton";
 
 type Chapter = {
 	id: string;
@@ -123,6 +124,14 @@ export default function NovelReaderPage() {
 		const totalPages = Math.ceil(chapter.content.length / paragraphsPerPage);
 
 		return (
+			<div>
+				<div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-50">
+							<GazeScrollButton direction="up" />
+							<AutoScrollToggle />
+							<GazeScrollButton direction="down" />
+							<SpeakButton text={visibleParagraphs.join(" ")} />
+						</div>
+			
 			<div className="max-w-3xl mx-auto">
 				{/* Chapter Navigation */}
 				<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
@@ -187,6 +196,7 @@ export default function NovelReaderPage() {
 					>
 						Next Page →
 					</GazeButton>
+				</div>
 				</div>
 			</div>
 		);
@@ -272,12 +282,7 @@ export default function NovelReaderPage() {
 							<AiOutlineLeft />
 						</GazeButton>
 					</div>
-						<div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-50">
-							<GazeScrollButton direction="up" />
-							<AutoScrollToggle />
-							<GazeScrollButton direction="down" />
-							{/* <SpeakButton text={visibleParagraphs.join(" ")} /> */}
-						</div>
+						
 					{renderReadingContent()}
 				</motion.div>
 			)}
