@@ -79,7 +79,7 @@ const LazyImage: React.FC<LazyImageProps> = ({ src, alt, className }) => {
 const ChapterDetail: React.FC = () => {
 	const router = useRouter();
 	const params = useParams();
-	  const id = params.id as string;
+    const id = params?.id as string || "";
 //   const { id } = router.query;
   const [chapterImages, setChapterImages] = useState<ChapterImage[]>([]);
   const [chapterTitle, setChapterTitle] = useState<string>("");

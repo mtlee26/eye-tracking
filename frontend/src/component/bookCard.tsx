@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface Book {
+	id: any;
   slug: string;
   thumb_url: string;
   name: string;
@@ -43,8 +44,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
   }, [isHovered]);
 
 	const handleHoverActivate = () => {
+		console.log(book)
 		if (book.category === "comics") {
-			router.push(`/book/${book.slug}`);
+			router.push(`/comics/${book.slug}`);
 		} else {
 			router.push(`/book/${book.slug}`);
 		}
@@ -59,7 +61,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ scale: 1.1 }}
-      onClick={() => router.push(`/book/${book.slug}`)}
+		  onClick={() =>
+			//   console.log(book)
+			  router.push(`/book/${book.id}`)
+}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

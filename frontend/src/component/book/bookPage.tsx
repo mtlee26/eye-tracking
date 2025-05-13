@@ -21,9 +21,9 @@ interface ApiResponse {
   };
 }
 
-export const metadata = {
-  title: 'Reading | Eyetertainment',
-};
+// export const metadata = {
+//   title: 'Reading | Eyetertainment',
+// };
 
 export default function BooksPage() {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -31,7 +31,7 @@ export default function BooksPage() {
   const [books, setBooks] = useState<Book[]>([]);
 
   useEffect(() => {
-    document.title = metadata.title;
+    // document.title = metadata.title;
     fetchBooks();
     // Cleanup function if needed
     return () => {
