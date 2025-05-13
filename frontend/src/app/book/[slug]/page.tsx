@@ -72,8 +72,8 @@ export default function NovelReaderPage() {
 					const novelData: Novel = {
 						id: params?.slug as string,
 						title: bookData.title,
-						author: bookData.authors?.[0]?.name || "Unknown",
-						description: bookData.description || "No description available.",
+						author: bookData.authors?.[0]?.name || "",
+						description: bookData.description || "",
 						thumbnail: thumbnailUrl || "/default-cover.jpg",
 						chapters: parsedChapters,
 						metadata: {
@@ -102,7 +102,7 @@ export default function NovelReaderPage() {
 	}, [currentChapterIndex]);
 
 	const renderGutenbergHeader = () => (
-		<div id="pg-header" className="mb-10 text-center">
+		<div id="pg-header" className="mb-4 text-center">
 			<h1 id="pg-header-heading" className="text-3xl font-bold mb-4">
 				{novel?.title}
 			</h1>
@@ -232,24 +232,24 @@ export default function NovelReaderPage() {
 		<div className="bg-white min-h-screen py-10 px-4 sm:px-6">
 			{!isReading ? (
 				<motion.div
-					initial={{ opacity: 0 }}
+					initial={false}
 					animate={{ opacity: 1 }}
 					transition={{ duration: 0.5 }}
 					className="max-w-4xl mx-auto"
 				>
 					{renderGutenbergHeader()}
 
-					<div className="flex flex-col items-center my-16 gap-6">
+					<div className="flex flex-col items-center my-16 gap-6 mb-8">
 						<motion.img
 							src={novel.thumbnail}
 							alt={novel.title}
-							className="w-48 h-64 object-cover rounded-lg shadow-xl"
+							className="w-64 h-96 object-cover rounded-lg shadow-xl"
 							whileHover={{ scale: 1.03 }}
 						/>
 
-						<p className="text-lg text-gray-700 max-w-2xl text-center">
+						{/* <p className="text-lg text-gray-700 max-w-2xl text-center">
 							{novel.description}
-						</p>
+						</p> */}
 
 						<GazeButton
 							onClick={() => setIsReading(true)}
@@ -270,7 +270,7 @@ export default function NovelReaderPage() {
 					transition={{ duration: 0.5 }}
 				>
 					{/* Back Button */}
-						<div className="max-w-4xl ml-8 mb-6 flex justify-start">
+						<div className="max-w-4xl ml-8 mb-6 fixed justify-start">
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
