@@ -12,13 +12,14 @@
 // }
 //     </Layout>
 // src/app/needboard/page.tsx
-import NeedBoardComponent from "@/component/needboard/NeedBoard"; // << TÊN EXPORT ĐÚNG LÀ GÌ?
-import Layout from "@/component/layout/layout";                   // << ĐƯỜNG DẪN ĐÚNG?
+// src/app/needboard/page.tsx
+import NeedBoard from "@/component/needboard/NeedBoard"; // Đặt tên rõ ràng
+import Layout from "@/component/layout/layout";
 
 export default function NeedBoardPage() {
   return (
     <Layout>
-      <NeedBoardComponent /> {/* << SỬ DỤNG TÊN ĐÃ IMPORT */}
+      <NeedBoard />
     </Layout>
   );
 }

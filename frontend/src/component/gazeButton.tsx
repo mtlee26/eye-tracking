@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useEffect, ReactNode } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
@@ -73,7 +74,7 @@ export default function GazeButton({
           position: "absolute",
           bottom: 0,
           left: 0,
-          width: `${progress}%`,
+          width: '${progress}%',
           height: "5px",
           backgroundColor: "#adc6ff",
           transition: "width 0.05s ease-out",
