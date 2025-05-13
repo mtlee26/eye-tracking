@@ -48,7 +48,7 @@ export default function GazeButton({
   }, [isHovered]);
 
   const handleHoverActivate = () => {
-    onClick();
+     if (onClick) onClick(); 
   };
 
   return (
