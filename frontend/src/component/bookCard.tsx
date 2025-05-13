@@ -7,7 +7,8 @@ interface Book {
   slug: string;
   thumb_url: string;
   name: string;
-  chaptersLatest: { chapter_name: string }[];
+	chaptersLatest: { chapter_name: string }[];
+	category: string;
 }
 
 interface BookCardProps {
@@ -41,8 +42,12 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
     return () => clearInterval(timer);
   }, [isHovered]);
 
-  const handleHoverActivate = () => {
-    router.push(`/book/${book.slug}`);
+	const handleHoverActivate = () => {
+		if (book.category === "comics") {
+			router.push(`/book/${book.slug}`);
+		} else {
+			router.push(`/book/${book.slug}`);
+		}
   };
 
   return (
@@ -60,13 +65,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
     >
       <div className="relative w-full h-2/3" style={{ cursor: "pointer" }}>
         <img
-          src={`https://otruyenapi.com/uploads/comics/${book.thumb_url}`}
+          src={`${book.thumb_url}`}
           alt={book.name}
           className="w-full h-full object-cover rounded-lg"
         />
-        <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-sm px-2 py-1 rounded">
+        {/* <span className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-sm px-2 py-1 rounded">
           Chap {book.chaptersLatest[0]?.chapter_name || "N/A"}
-        </span>
+        </span> */}
       </div>
       <h2 className="text-center text-xl font-semibold">{book.name}</h2>
       <div

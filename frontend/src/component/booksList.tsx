@@ -42,7 +42,7 @@ const BooksList: React.FC<BooksListProps> = ({
   const [isFocus, setIsFocus] = useState(false);
 
   return (
-      <div className="container mx-auto p-6 flex flex-col items-center justify-center h-screen mt-12">
+      <div className="container mx-auto p-6 flex flex-col items-center justify-center h-screen mt-4">
         {isFocus && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center">
             <Image

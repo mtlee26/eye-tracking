@@ -50,15 +50,20 @@ export default function BookDetail() {
 
   const fetchBookDetail = async (bookSlug: string) => {
     try {
-      const response = await axios.get<BookResponse>(
-        `https://otruyenapi.com/v1/api/truyen-tranh/${bookSlug}`,
-        {
-          headers: { Accept: "application/json" },
-        }
-		);
-		 console.log("Book detail response:", response.data);
-      const bookData = response.data?.data?.item || null;
-      setBook(bookData);
+    //   const response = await axios.get<BookResponse>(
+    //     `https://otruyenapi.com/v1/api/truyen-tranh/${bookSlug}`,
+    //     {
+    //       headers: { Accept: "application/json" },
+    //     }
+	// 	);
+	// 	 console.log("Book detail response:", response.data);
+    //   const bookData = response.data?.data?.item || null;
+		//   setBook(bookData);
+		const response = await fetch(
+			`https://www.googleapis.com/books/v1/volumes/${bookSlug}`
+		  );
+		const data = await response.json();
+		console.log(data)
     } catch (error: any) {
       console.error("Error fetching book detail:", error.message);
     }
