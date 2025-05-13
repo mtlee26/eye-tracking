@@ -39,18 +39,54 @@ export default function BooksPage() {
 			try {
 				const query = selectedCategory || "Novel";
 				if (query === "Comics") {
+					// const response = await fetch(
+					// 	`https://otruyenapi.com/v1/api/danh-sach/hoan-thanh?page=1`,
+					// 	{
+					// 		headers: { Accept: "application/json" },
+					// 	}
+					// );
+					// const data = await response.json();
+					// const processedBooks = data?.data?.items?.map((book: { thumb_url: any; }) => ({
+					// 	...book,
+					// 	thumb_url: `https://otruyenapi.com/uploads/comics/${book.thumb_url}`
+					// })) || [];
+					// console.log("Comics data:", processedBooks);
+					// setBooks(processedBooks);
+
 					const response = await fetch(
-						`https://otruyenapi.com/v1/api/danh-sach/hoan-thanh?page=1`,
-						{
-							headers: { Accept: "application/json" },
-						}
+						`https://api.mangadex.org/manga?limit=20&order[followedCount]=desc&includes[]=cover_art`
 					);
 					const data = await response.json();
-					const processedBooks = data?.data?.items?.map((book: { thumb_url: any; }) => ({
-						...book,
-						thumb_url: `https://otruyenapi.com/uploads/comics/${book.thumb_url}`
-					})) || [];
-					console.log("Comics data:", processedBooks);
+					console.log(data)
+
+					const processedBooks = data?.data?.map((manga: any) => {
+						const id = manga.id;
+						const attributes = manga.attributes;
+						let title = attributes?.title?.en;
+						if (!title) {
+							const altEn = attributes?.altTitles?.find((alt: any) => alt?.en);
+							title = altEn?.en || "Untitled";
+						}
+
+						// Tìm cover ảnh từ relationships
+						const coverArt = manga.relationships.find((rel: any) => rel.type === "cover_art");
+						const fileName = coverArt?.attributes?.fileName;
+
+						const coverImage = fileName
+							? `https://uploads.mangadex.org/covers/${id}/${fileName}.256.jpg`
+							: "";
+
+						return {
+							id,
+							title,
+							name: title,
+							slug: title,
+							author: attributes?.author || "Unknown",
+							coverImage,
+							thumb_url: coverImage,
+							category: "comics",
+						};
+					}) || [];
 					setBooks(processedBooks);
 				} else {
 					const response = await fetch(
@@ -108,11 +144,12 @@ export default function BooksPage() {
 			<div className="mb-8">
 				<h2 className="text-2xl font-bold mb-4 text-white">Categories</h2>
 				<div className="flex flex-wrap gap-8">
-					{DEFAULT_CATEGORIES.map(category => (
+					{DEFAULT_CATEGORIES.map((category, index) => (
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
 							onClick={() => handleCategorySelect(category)}
+							key={index}
 							className={`p-6 rounded-full bg-[#1e1f25] text-white text-xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${selectedCategory === category
 									? "hover:shadow-xl"
 									: "opacity-70"

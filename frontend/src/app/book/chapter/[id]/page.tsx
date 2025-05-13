@@ -85,7 +85,7 @@ const ChapterDetail: React.FC = () => {
   const [chapterTitle, setChapterTitle] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const pagesPerPage = 2;
+  const pagesPerPage = 1;
 
   useEffect(() => {
     if (id && typeof id === "string") {
@@ -218,7 +218,7 @@ const ChapterDetail: React.FC = () => {
           <AiOutlineLeft />
         </GazeButton>
 
-        <motion.div
+        {/* <motion.div
           className="grid gap-4 md:gap-8 sm:grid-cols-2 md:grid-cols-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -241,7 +241,33 @@ const ChapterDetail: React.FC = () => {
                 />
               </motion.div>
             ))}
-        </motion.div>
+        </motion.div> */}
+
+			  <motion.div
+				  className="flex justify-center mb-16"
+				  initial={{ opacity: 0 }}
+				  animate={{ opacity: 1 }}
+				  transition={{ duration: 0.25 }}
+			  >
+				  {chapterImages.length > 0 && (
+					  <motion.div
+						  key={chapterImages[currentPage]?.id}
+						  className="relative flex justify-center mb-10"
+						  initial={{ opacity: 0, x: 100 }}
+						  animate={{ opacity: 1, x: 0 }}
+						  exit={{ opacity: 0, x: -100 }}
+						  transition={{ duration: 0.3 }}
+					  >
+						  <LazyImage
+							  src={chapterImages[currentPage].url}
+							  alt={`Page ${chapterImages[currentPage].id}`}
+							  className="max-h-[80vh] max-w-[80vw] shadow-lg rounded-lg object-contain"
+						  />
+					  </motion.div>
+				  )}
+
+			  </motion.div>
+			  
 
         <GazeButton
           whileHover={{ scale: 1.2 }}

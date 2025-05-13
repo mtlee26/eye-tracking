@@ -46,7 +46,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
 	const handleHoverActivate = () => {
 		console.log(book)
 		if (book.category === "comics") {
-			router.push(`/comics/${book.slug}`);
+			router.push(`/comics/${book.id}`);
 		} else {
 			router.push(`/book/${book.slug}`);
 		}
