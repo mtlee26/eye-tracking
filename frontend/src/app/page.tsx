@@ -1,75 +1,50 @@
-'use client';
+"use client";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import GazeButton from "@/component/gazeButton"; // Nút điều khiển bằng mắt (tuỳ chỉnh riêng)
 
-import { useEffect, useState } from 'react';
-import { fetchBooksFromGoogleBooks, fetchComicsFromAnof } from '@/lib/api';
+export default function HomePage() {
+	const router = useRouter();
 
-const genres = [
-  { name: 'Novel', source: 'google' },
-  { name: 'Vietnamese Literature', source: 'google' },
-  { name: 'Action', source: 'anof' },
-  { name: 'Romance', source: 'anof' },
-];
+	return (
+		<div className="min-h-screen bg-[#f7faff] flex flex-col justify-center items-center px-6">
+			<motion.h1
+				className="text-4xl md:text-5xl font-extrabold text-[#1e293b] mb-12 text-center"
+				initial={{ opacity: 0, y: -20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.8 }}
+			>
+				👁️ Eye tracking
+			</motion.h1>
 
-export default function Home() {
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [books, setBooks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+			<motion.p
+				className="text-lg md:text-xl text-gray-600 mb-12 text-center max-w-xl"
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 1 }}
+			>
+				Điều khiển máy tính bằng mắt. Chọn một chế độ bên dưới để bắt đầu trải nghiệm:
+			</motion.p>
 
-  useEffect(() => {
-    if (!selectedGenre) return;
-    const genreInfo = genres.find((g) => g.name === selectedGenre);
-    if (!genreInfo) return;
+			<div className="flex flex-col md:flex-row gap-8">
+				<GazeButton
+					whileHover={{ scale: 1.1 }}
+					whileTap={{ scale: 0.95 }}
+					onClick={() => router.push("/books")}
+					className="bg-white border border-blue-400 text-blue-700 px-10 py-6 rounded-xl text-2xl font-semibold shadow-md hover:bg-blue-50"
+				>
+					📖 Đọc sách
+				</GazeButton>
 
-    setLoading(true);
-    const fetchData = async () => {
-      let result = [];
-      if (genreInfo.source === 'google') {
-        result = await fetchBooksFromGoogleBooks(genreInfo.name);
-      } else {
-        result = await fetchComicsFromAnof(genreInfo.name);
-	  }
-	console.log(result);
-      setBooks(result);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [selectedGenre]);
-
-  return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Thể loại</h1>
-      <div className="flex gap-2 flex-wrap">
-        {genres.map((genre) => (
-          <button
-            key={genre.name}
-            onClick={() => setSelectedGenre(genre.name)}
-            className={`px-4 py-2 rounded-full border ${
-              selectedGenre === genre.name ? 'bg-blue-500 text-white' : 'bg-white'
-            }`}
-          >
-            {genre.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-4">
-          {selectedGenre ? `Kết quả cho "${selectedGenre}"` : 'Chọn thể loại để xem sách'}
-        </h2>
-        {loading ? (
-          <p>Đang tải...</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {books.map((book) => (
-              <div key={book.id} className="border rounded-lg overflow-hidden p-2">
-                <img src={book.image} alt={book.title} className="w-full h-40 object-cover mb-2" />
-                <p className="text-sm font-medium">{book.title}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+				<GazeButton
+					whileHover={{ scale: 1.1 }}
+					whileTap={{ scale: 0.95 }}
+					onClick={() => router.push("/needboard")}
+					className="bg-white border border-pink-400 text-pink-600 px-10 py-6 rounded-xl text-2xl font-semibold shadow-md hover:bg-pink-50"
+				>
+					🧠 NeedBoard
+				</GazeButton>
+			</div>
+		</div>
+	);
 }
