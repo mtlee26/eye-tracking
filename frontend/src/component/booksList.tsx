@@ -11,12 +11,13 @@ interface Book {
 	id?: string | number;
 	title: string;
 	author?: string;
-	coverImage?: string;
-	slug: string;    
-	thumb_url: string;     
-	name: string;         
-	chaptersLatest: any;   
-	[key: string]: any;
+  coverImage?: string;
+  slug: string;    
+  thumb_url: string;     
+  name: string;         
+  chaptersLatest: any;   
+  category: string;      
+  [key: string]: any;
   }
 
 interface BooksListProps {

@@ -250,274 +250,276 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import GazeButton from "@/component/gazeButton";
+import { AiOutlineLeft } from "react-icons/ai";
 
 type Chapter = {
-  id: string;
-  title: string;
-  content: string[];
+	id: string;
+	title: string;
+	content: string[];
 };
 
 type Novel = {
-  id: string;
-  title: string;
-  author: string;
-  description: string;
-  thumbnail: string;
-  chapters: Chapter[];
-  metadata: {
-    publisher?: string;
-    language?: string;
-    releaseDate?: string;
-  };
+	id: string;
+	title: string;
+	author: string;
+	description: string;
+	thumbnail: string;
+	chapters: Chapter[];
+	metadata: {
+		publisher?: string;
+		language?: string;
+		releaseDate?: string;
+	};
 };
 
 export default function NovelReaderPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [novel, setNovel] = useState<Novel | null>(null);
-  const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isReading, setIsReading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+	const params = useParams();
+	const router = useRouter();
+	const [novel, setNovel] = useState<Novel | null>(null);
+	const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [isReading, setIsReading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const paragraphsPerPage = 8;
-	
-  // Fetch novel data
-  useEffect(() => {
-    const fetchNovel = async () => {
-      try {
 
-        
-			const response = await fetch('/api/proxy');
-		const data = await response.json();
-		console.log("Book detail response:", data);
-		  const bookData = (data as { results: any[] })?.results?.[0] || null;
-		        if (bookData) {
-        // Lấy nội dung sách từ link HTML
-		  const htmlUrl = bookData.formats["text/html"];
+	// Fetch novel data
+	useEffect(() => {
+		const fetchNovel = async () => {
+			try {
+				const response = await fetch(`/api/proxy?title=${params?.slug}`);
+				const data = await response.json();
+				console.log("Book detail response:", data);
+				const bookData = (data as { results: any[] })?.results?.[0] || null;
+				if (bookData) {
+					// Lấy nội dung sách từ link HTML
+					const htmlUrl = bookData.formats["text/html"];
 					console.log(htmlUrl)
 					const thumbnailUrl = bookData.formats["image/jpeg"];
-        const htmlResponse = await fetch('/api/process_book');
-		  const htmlContent = await htmlResponse.json();
-		  console.log(htmlContent)
+					const htmlResponse = await fetch(`/api/process_book?bookId=${bookData.id}`);
+					const htmlContent = await htmlResponse.json();
+					console.log(htmlContent)
 
-		  const parsedChapters: Chapter[] = htmlContent.chapters
-		  .filter((ch: any) => 
-			typeof ch.title === "string" && 
-			ch.title.toLowerCase().includes("chapter") && 
-			Array.isArray(ch.content) && ch.content.length > 0
-		  )
-		  .map((ch: any, idx: number) => ({
-			id: `chapter-${idx + 1}`,
-			title: ch.title.replace(/\n/g, ' ').trim(),
-			content: ch.content
-		  }));
-	  
-		// Tạo đối tượng novel từ dữ liệu
-		const novelData: Novel = {
-		  id: params?.slug as string,
-		  title: bookData.title,
-		  author: bookData.authors?.[0]?.name || "Unknown",
-		  description: bookData.description || "No description available.",
-		  thumbnail: thumbnailUrl || "/default-cover.jpg",
-		  chapters: parsedChapters,
-		  metadata: {
-			publisher: "Project Gutenberg",
-			language: bookData.languages?.[0] || "English",
-			releaseDate: bookData.release_date || "Unknown"
-		  }
+					const parsedChapters: Chapter[] = htmlContent.chapters
+						.filter((ch: any) =>
+							typeof ch.title === "string" &&
+							ch.title.toLowerCase().includes("chapter") &&
+							Array.isArray(ch.content) && ch.content.length > 0
+						)
+						.map((ch: any, idx: number) => ({
+							id: `chapter-${idx + 1}`,
+							title: ch.title.replace(/\n/g, ' ').trim(),
+							content: ch.content
+						}));
+
+					// Tạo đối tượng novel từ dữ liệu
+					const novelData: Novel = {
+						id: params?.slug as string,
+						title: bookData.title,
+						author: bookData.authors?.[0]?.name || "Unknown",
+						description: bookData.description || "No description available.",
+						thumbnail: thumbnailUrl || "/default-cover.jpg",
+						chapters: parsedChapters,
+						metadata: {
+							publisher: "Project Gutenberg",
+							language: bookData.languages?.[0] || "English",
+							releaseDate: bookData.release_date || "Unknown"
+						}
+					};
+
+					setNovel(novelData);
+				}
+				// setNovel(bookData);
+			} catch (error) {
+				console.error("Failed to fetch novel:", error);
+			} finally {
+				setIsLoading(false);
+			}
 		};
-	  
-		setNovel(novelData);
-      }
-        // setNovel(bookData);
-      } catch (error) {
-        console.error("Failed to fetch novel:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchNovel();
-  }, [params?.slug]);
+		fetchNovel();
+	}, [params?.slug]);
 
-  // Reset page when chapter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [currentChapterIndex]);
+	// Reset page when chapter changes
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [currentChapterIndex]);
 
-  const renderGutenbergHeader = () => (
-    <div id="pg-header" className="mb-10 text-center">
-      <h1 id="pg-header-heading" className="text-3xl font-bold mb-4">
-        {novel?.title}
-      </h1>
-      <div className="text-xl mb-6">by {novel?.author}</div>
-      
-      <div id="pg-start-separator" className="my-10 border-t border-gray-300 w-1/2 mx-auto"></div>
+	const renderGutenbergHeader = () => (
+		<div id="pg-header" className="mb-10 text-center">
+			<h1 id="pg-header-heading" className="text-3xl font-bold mb-4">
+				{novel?.title}
+			</h1>
+			<div className="text-xl mb-6">by {novel?.author}</div>
 
-    </div>
-  );
+			<div id="pg-start-separator" className="my-10 border-t border-gray-300 w-1/2 mx-auto"></div>
+
+		</div>
+	);
 
 
-  const renderReadingContent = () => {
-    if (!novel) return null;
-    
-    const chapter = novel.chapters[currentChapterIndex];
-    const startIdx = (currentPage - 1) * paragraphsPerPage;
-    const endIdx = startIdx + paragraphsPerPage;
-    const visibleParagraphs = chapter.content.slice(startIdx, endIdx);
-    const totalPages = Math.ceil(chapter.content.length / paragraphsPerPage);
+	const renderReadingContent = () => {
+		if (!novel) return null;
 
-    return (
-      <div className="max-w-3xl mx-auto">
-        {/* Chapter Navigation */}
-        <div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
-          <GazeButton
-            onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
-            disabled={currentChapterIndex === 0}
-            className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-          >
-            ← Previous Chapter
-          </GazeButton>
-          
-          <span className="font-medium text-lg">
-            {chapter.title}
-          </span>
-          
-          <GazeButton
-            onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
-            disabled={currentChapterIndex === novel.chapters.length - 1}
-            className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-          >
-            Next Chapter →
-          </GazeButton>
-        </div>
+		const chapter = novel.chapters[currentChapterIndex];
+		const startIdx = (currentPage - 1) * paragraphsPerPage;
+		const endIdx = startIdx + paragraphsPerPage;
+		const visibleParagraphs = chapter.content.slice(startIdx, endIdx);
+		const totalPages = Math.ceil(chapter.content.length / paragraphsPerPage);
 
-        {/* Chapter Content */}
-        <div className="prose lg:prose-xl mx-auto">
-          {visibleParagraphs.map((para, idx) => (
-            <motion.p 
-              key={idx}
-              className="text-justify indent-8 my-4 leading-relaxed"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: idx * 0.05 }}
-            >
-              {para}
-            </motion.p>
-          ))}
-        </div>
+		return (
+			<div className="max-w-3xl mx-auto">
+				{/* Chapter Navigation */}
+				<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
+					<GazeButton
+						onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
+						disabled={currentChapterIndex === 0}
+						className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+						whileHover={{ scale: 1.05 }}
+					>
+						← Previous Chapter
+					</GazeButton>
 
-        {/* Page Navigation */}
-        <div className="flex justify-between items-center mt-10 mb-16">
-          <GazeButton
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-          >
-            ← Previous Page
-          </GazeButton>
-          
-          <span className="text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
-          
-          <GazeButton
-            onClick={() => setCurrentPage(p => p + 1)}
-            disabled={currentPage >= totalPages}
-            className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-            whileHover={{ scale: 1.05 }}
-          >
-            Next Page →
-          </GazeButton>
-        </div>
-      </div>
-    );
-  };
+					<span className="font-medium text-lg">
+						{chapter.title}
+					</span>
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1 }}
-          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
+					<GazeButton
+						onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
+						disabled={currentChapterIndex === novel.chapters.length - 1}
+						className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+						whileHover={{ scale: 1.05 }}
+					>
+						Next Chapter →
+					</GazeButton>
+				</div>
 
-  if (!novel) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold mb-4">Novel Not Found</h1>
-        <GazeButton
-          onClick={() => router.back()}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Go Back
-        </GazeButton>
-      </div>
-    );
-  }
+				{/* Chapter Content */}
+				<div className="prose lg:prose-xl mx-auto">
+					{visibleParagraphs.map((para, idx) => (
+						<motion.p
+							key={idx}
+							className="text-justify indent-8 my-4 leading-relaxed"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.3, delay: idx * 0.05 }}
+						>
+							{para}
+						</motion.p>
+					))}
+				</div>
 
-  return (
-    <div className="bg-white min-h-screen py-10 px-4 sm:px-6">
-      {!isReading ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto"
-        >
-          {renderGutenbergHeader()}
-          
-          <div className="flex flex-col items-center my-16 gap-6">
-            <motion.img
-              src={novel.thumbnail}
-              alt={novel.title}
-              className="w-48 h-64 object-cover rounded-lg shadow-xl"
-              whileHover={{ scale: 1.03 }}
-            />
-            
-            <p className="text-lg text-gray-700 max-w-2xl text-center">
-              {novel.description}
-            </p>
-            
-            <GazeButton
-              onClick={() => setIsReading(true)}
-              className="px-8 py-4 bg-blue-600 text-white text-xl rounded-lg hover:bg-blue-700"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Start Reading
-            </GazeButton>
-          </div>
-          
-          {/* {renderGutenbergFooter()} */}
-        </motion.div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Back Button */}
-          <div className="max-w-4xl mx-auto mb-6">
-            <GazeButton
-              onClick={() => setIsReading(false)}
-              className="flex items-center text-blue-600 hover:text-blue-800"
-              whileHover={{ x: -3 }}
-            >
-              ← Back to Book Info
-            </GazeButton>
-          </div>
-          
-          {renderReadingContent()}
-        </motion.div>
-      )}
-    </div>
-  );
+				{/* Page Navigation */}
+				<div className="flex justify-between items-center mt-10 mb-16">
+					<GazeButton
+						onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+						disabled={currentPage === 1}
+						className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+						whileHover={{ scale: 1.05 }}
+					>
+						← Previous Page
+					</GazeButton>
+
+					<span className="text-gray-600">
+						Page {currentPage} of {totalPages}
+					</span>
+
+					<GazeButton
+						onClick={() => setCurrentPage(p => p + 1)}
+						disabled={currentPage >= totalPages}
+						className="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+						whileHover={{ scale: 1.05 }}
+					>
+						Next Page →
+					</GazeButton>
+				</div>
+			</div>
+		);
+	};
+
+	if (isLoading) {
+		return (
+			<div className="flex justify-center items-center h-screen">
+				<motion.div
+					animate={{ rotate: 360 }}
+					transition={{ repeat: Infinity, duration: 1 }}
+					className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+				/>
+			</div>
+		);
+	}
+
+	if (!novel) {
+		return (
+			<div className="text-center py-20">
+				<h1 className="text-2xl font-bold mb-4">Novel Not Found</h1>
+				<GazeButton
+					onClick={() => router.back()}
+					className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+				>
+					Go Back
+				</GazeButton>
+			</div>
+		);
+	}
+
+	return (
+		<div className="bg-white min-h-screen py-10 px-4 sm:px-6">
+			{!isReading ? (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.5 }}
+					className="max-w-4xl mx-auto"
+				>
+					{renderGutenbergHeader()}
+
+					<div className="flex flex-col items-center my-16 gap-6">
+						<motion.img
+							src={novel.thumbnail}
+							alt={novel.title}
+							className="w-48 h-64 object-cover rounded-lg shadow-xl"
+							whileHover={{ scale: 1.03 }}
+						/>
+
+						<p className="text-lg text-gray-700 max-w-2xl text-center">
+							{novel.description}
+						</p>
+
+						<GazeButton
+							onClick={() => setIsReading(true)}
+							className="px-8 py-4 bg-blue-600 text-white text-xl rounded-lg hover:bg-gray-300"
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+						>
+							Start Reading
+						</GazeButton>
+					</div>
+
+					{/* {renderGutenbergFooter()} */}
+				</motion.div>
+			) : (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.5 }}
+				>
+					{/* Back Button */}
+						<div className="max-w-4xl ml-8 mb-6 flex justify-start">
+						<GazeButton
+							whileHover={{ scale: 1.2 }}
+							whileTap={{ scale: 0.9 }}
+							onClick={() => setIsReading(false)}
+
+							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+								} active:scale-95`}
+						>
+							<AiOutlineLeft />
+						</GazeButton>
+					</div>
+
+					{renderReadingContent()}
+				</motion.div>
+			)}
+		</div>
+	);
 }

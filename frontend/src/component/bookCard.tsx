@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface Book {
-	id: any;
+	id?: string | number;
   slug: string;
   thumb_url: string;
   name: string;
@@ -62,8 +62,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, index }) => {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       whileHover={{ scale: 1.1 }}
 		  onClick={() =>
-			//   console.log(book)
-			  router.push(`/book/${book.id}`)
+			handleHoverActivate()
 }
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
