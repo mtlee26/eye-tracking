@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { Search, ChevronUp, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface YouTubeVideo {
@@ -36,6 +36,12 @@ export default function VideoLearning() {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [hoveredElement, setHoveredElement] = useState<string | null>(null);
+  const [progress, setProgress] = useState<Record<string, number>>({});
+  const videoListRef = useRef<HTMLDivElement>(null); // Ref for the video list section
+
+  const AUTO_CLICK_DELAY = 2000;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const useDebounce = (value: string, delay: number) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -94,10 +100,6 @@ export default function VideoLearning() {
       setVideoLessons(videos);
     } catch (error) {
       console.error("Lỗi khi lấy video từ YouTube:", error);
-      // if (axios.isAxiosError(error)) {
-      //   console.error("Response data:", error.response?.data);
-      //   console.error("Status:", error.response?.status);
-      // }
     } finally {
       setLoading(false);
     }
@@ -124,11 +126,6 @@ export default function VideoLearning() {
     setIsVideoPlaying(false);
   };
 
-  const [hoveredElement, setHoveredElement] = useState<string | null>(null);
-  const [progress, setProgress] = useState<Record<string, number>>({});
-  const AUTO_CLICK_DELAY = 2000;
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const selectKey = (char: string) => {
     setSearchInput((prev) => prev + char);
   };
@@ -139,6 +136,20 @@ export default function VideoLearning() {
 
   const closeKeyboard = () => {
     setShowKeyboard(false);
+  };
+
+  // Function to handle scroll up
+  const handleScrollUp = () => {
+    if (videoListRef.current) {
+      videoListRef.current.scrollBy({ top: -100, behavior: "smooth" });
+    }
+  };
+
+  // Function to handle scroll down
+  const handleScrollDown = () => {
+    if (videoListRef.current) {
+      videoListRef.current.scrollBy({ top: 100, behavior: "smooth" });
+    }
   };
 
   useEffect(() => {
@@ -179,6 +190,10 @@ export default function VideoLearning() {
           deleteKey();
         } else if (hoveredElement === "close") {
           closeKeyboard();
+        } else if (hoveredElement === "scrollUpButton") {
+          handleScrollUp();
+        } else if (hoveredElement === "scrollDownButton") {
+          handleScrollDown();
         } else {
           selectKey(hoveredElement === "Space" ? " " : hoveredElement);
         }
@@ -200,9 +215,9 @@ export default function VideoLearning() {
   }, [hoveredElement, videoLessons, recentVideos, isVideoPlaying]);
 
   return (
-    <div className="flex min-h-screen bg-gray-100 p-6">
-      <div className="flex-1 bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-4xl font-bold text-red-600 mb-8 text-center">
+    <div className="w-full min-h-screen p-0">
+      <div className="w-full h-full bg-white p-4 sm:p-6">
+        <h1 className="text-4xl font-bold text-blue-700 mb-8 text-center">
           Khám Phá Video Youtube
         </h1>
 
@@ -225,7 +240,7 @@ export default function VideoLearning() {
               />
               {hoveredElement === "searchInput" && (
                 <div
-                  className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
+                  className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50"
                   style={{
                     width: `${progress["searchInput"] || 0}%`,
                   }}
@@ -237,13 +252,13 @@ export default function VideoLearning() {
                 type="submit"
                 onMouseEnter={() => setHoveredElement("searchButton")}
                 onMouseLeave={() => setHoveredElement(null)}
-                className="bg-red-600 hover:bg-red-700 hover:scale-110 text-white px-6 py-3 rounded-lg text-lg transition-transform duration-300"
+                className="bg-blue-600 hover:bg-blue-700 hover:scale-110 text-white px-6 py-3 rounded-lg text-lg transition-transform duration-300"
               >
                 <Search size={24} />
               </button>
               {hoveredElement === "searchButton" && (
                 <div
-                  className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
+                  className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50"
                   style={{
                     width: `${progress["searchButton"] || 0}%`,
                   }}
@@ -270,7 +285,7 @@ export default function VideoLearning() {
                   </button>
                   {hoveredElement === (char === " " ? "Space" : char) && (
                     <div
-                      className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
+                      className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50"
                       style={{
                         width: `${progress[char === " " ? "Space" : char] || 0}%`,
                       }}
@@ -290,7 +305,7 @@ export default function VideoLearning() {
                 </button>
                 {hoveredElement === "delete" && (
                   <div
-                    className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
+                    className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50"
                     style={{
                       width: `${progress["delete"] || 0}%`,
                     }}
@@ -303,13 +318,13 @@ export default function VideoLearning() {
                 onMouseLeave={() => setHoveredElement(null)}
               >
                 <button
-                  className="p-4 bg-red-600 text-white rounded-lg hover:bg-red-500 hover:scale-105 transition-transform duration-300 w-full"
+                  className="p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-500 hover:scale-105 transition-transform duration-300 w-full"
                 >
                   Đóng
                 </button>
                 {hoveredElement === "close" && (
                   <div
-                    className="absolute bottom-0 left-0 h-1 bg-red-800 transition-all duration-50"
+                    className="absolute bottom-0 left-0 h-1 bg-blue-800 transition-all duration-50"
                     style={{
                       width: `${progress["close"] || 0}%`,
                     }}
@@ -320,8 +335,50 @@ export default function VideoLearning() {
           )}
         </form>
 
+        {/* Scroll Buttons (Left side) */}
+        <div className="hidden md:flex flex-col gap-4 fixed left-4 top-1/2 transform -translate-y-1/2 z-50">
+          <div className="relative">
+            <button
+              onMouseEnter={() => setHoveredElement("scrollUpButton")}
+              onMouseLeave={() => setHoveredElement(null)}
+              className="p-5 bg-gray-300 text-white rounded-full hover:bg-gray-700 transition-colors text-4xl shadow-2xl w-16 h-16 flex items-center justify-center"
+            >
+              <ChevronUp />
+            </button>
+            {hoveredElement === "scrollUpButton" && (
+              <div
+                className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50 w-full"
+                style={{
+                  width: `${progress["scrollUpButton"] || 0}%`,
+                }}
+              />
+            )}
+          </div>
+          <div className="relative">
+            <button
+              onMouseEnter={() => setHoveredElement("scrollDownButton")}
+              onMouseLeave={() => setHoveredElement(null)}
+              className="p-5 bg-gray-300 text-white rounded-full hover:bg-gray-700 transition-colors text-4xl shadow-2xl w-16 h-16 flex items-center justify-center"
+            >
+              <ChevronDown />
+            </button>
+            {hoveredElement === "scrollDownButton" && (
+              <div
+                className="absolute bottom-0 left-0 h-1 bg-blue-600 transition-all duration-50 w-full"
+                style={{
+                  width: `${progress["scrollDownButton"] || 0}%`,
+                }}
+              />
+            )}
+          </div>
+        </div>
+
         {activeTab === "video-lessons" && (
-          <div>
+          <div
+            ref={videoListRef}
+            className="overflow-y-auto"
+            style={{ maxHeight: "calc(100vh - 200px)" }}
+          >
             {videoLessons.length > 0 && searchQuery && (
               <div className="mb-6">
                 <h2 className="text-2xl font-semibold text-gray-700 mb-4">
@@ -450,7 +507,7 @@ export default function VideoLearning() {
                 />
                 {hoveredElement === "playVideo" && !isVideoPlaying && (
                   <div
-                    className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50 w-full"
+                    className="absolute bottom-0 left-0 h-1 bg-blue-700 transition-all duration-50 w-full"
                     style={{
                       width: `${progress["playVideo"] || 0}%`,
                     }}
