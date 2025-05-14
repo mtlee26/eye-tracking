@@ -8,3 +8,4 @@ venv/
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+node_modules/

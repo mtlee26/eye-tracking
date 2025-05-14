@@ -73,7 +73,7 @@ export default function NovelReaderPage() {
 						id: params?.slug as string,
 						title: bookData.title,
 						author: bookData.authors?.[0]?.name || "",
-						description: bookData.description || "",
+						description: bookData.summaries[0] || "",
 						thumbnail: thumbnailUrl || "/default-cover.jpg",
 						chapters: parsedChapters,
 						metadata: {
@@ -126,77 +126,77 @@ export default function NovelReaderPage() {
 		return (
 			<div>
 				<div className="fixed right-16 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-50">
-							<GazeScrollButton direction="up" />
-							<AutoScrollToggle />
-							<GazeScrollButton direction="down" />
-							<SpeakButton text={visibleParagraphs.join(" ")} />
-						</div>
-			
-			<div className="max-w-3xl mx-auto">
-				{/* Chapter Navigation */}
-				<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
-					<GazeButton
-						onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
-						disabled={currentChapterIndex === 0}
-						className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-						whileHover={{ scale: 1.05 }}
-					>
-						← Previous Chapter
-					</GazeButton>
-
-					<span className="font-medium text-lg">
-						{chapter.title}
-					</span>
-
-					<GazeButton
-						onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
-						disabled={currentChapterIndex === novel.chapters.length - 1}
-						className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-						whileHover={{ scale: 1.05 }}
-					>
-						Next Chapter →
-					</GazeButton>
+					<GazeScrollButton direction="up" />
+					<AutoScrollToggle />
+					<GazeScrollButton direction="down" />
+					<SpeakButton text={visibleParagraphs.join(" ")} />
 				</div>
 
-				{/* Chapter Content */}
-				<div className="prose lg:prose-xl mx-auto">
-					{visibleParagraphs.map((para, idx) => (
-						<motion.p
-							key={idx}
-							className="text-justify indent-8 my-4 leading-relaxed"
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.3, delay: idx * 0.05 }}
+				<div className="max-w-3xl mx-auto">
+					{/* Chapter Navigation */}
+					<div className="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-lg">
+						<GazeButton
+							onClick={() => setCurrentChapterIndex(i => Math.max(0, i - 1))}
+							disabled={currentChapterIndex === 0}
+							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							whileHover={{ scale: 1.05 }}
 						>
-							{para}
-						</motion.p>
-					))}
-				</div>
+							← Previous Chapter
+						</GazeButton>
 
-				{/* Page Navigation */}
-				<div className="flex justify-between items-center mt-10 mb-16">
-					<GazeButton
-						onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-						disabled={currentPage === 1}
-						className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-						whileHover={{ scale: 1.05 }}
-					>
-						← Previous Page
-					</GazeButton>
+						<span className="font-medium text-lg">
+							{chapter.title}
+						</span>
 
-					<span className="text-gray-600">
-						Page {currentPage} of {totalPages}
-					</span>
+						<GazeButton
+							onClick={() => setCurrentChapterIndex(i => Math.min(novel.chapters.length - 1, i + 1))}
+							disabled={currentChapterIndex === novel.chapters.length - 1}
+							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							whileHover={{ scale: 1.05 }}
+						>
+							Next Chapter →
+						</GazeButton>
+					</div>
 
-					<GazeButton
-						onClick={() => setCurrentPage(p => p + 1)}
-						disabled={currentPage >= totalPages}
-						className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-						whileHover={{ scale: 1.05 }}
-					>
-						Next Page →
-					</GazeButton>
-				</div>
+					{/* Chapter Content */}
+					<div className="prose lg:prose-xl mx-auto">
+						{visibleParagraphs.map((para, idx) => (
+							<motion.p
+								key={idx}
+								className="text-justify indent-8 my-4 leading-relaxed"
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.3, delay: idx * 0.05 }}
+							>
+								{para}
+							</motion.p>
+						))}
+					</div>
+
+					{/* Page Navigation */}
+					<div className="flex justify-between items-center mt-10 mb-16">
+						<GazeButton
+							onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+							disabled={currentPage === 1}
+							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							whileHover={{ scale: 1.05 }}
+						>
+							← Previous Page
+						</GazeButton>
+
+						<span className="text-gray-600">
+							Page {currentPage} of {totalPages}
+						</span>
+
+						<GazeButton
+							onClick={() => setCurrentPage(p => p + 1)}
+							disabled={currentPage >= totalPages}
+							className="px-5 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50"
+							whileHover={{ scale: 1.05 }}
+						>
+							Next Page →
+						</GazeButton>
+					</div>
 				</div>
 			</div>
 		);
@@ -231,29 +231,45 @@ export default function NovelReaderPage() {
 	return (
 		<div className="bg-white min-h-screen py-10 px-4 sm:px-6">
 			{!isReading ? (
-				<motion.div
-					initial={false}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.5 }}
-					className="max-w-4xl mx-auto"
-				>
-					{renderGutenbergHeader()}
+				<div>
+					<div className="absolute top-10 left-10 z-50">
+						<GazeButton
+							whileHover={{ scale: 1.2 }}
+							whileTap={{ scale: 0.9 }}
+							onClick={() => router.push("/books")}
 
-					<div className="flex flex-col items-center my-16 gap-6 mb-8">
-						<motion.img
-							src={novel.thumbnail}
-							alt={novel.title}
-							className="w-64 h-96 object-cover rounded-lg shadow-xl"
-							whileHover={{ scale: 1.03 }}
-						/>
+							className={`p-8 rounded-full bg-[#1e1f25] text-white text-3xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+								} active:scale-95`}
+						>
+							<AiOutlineLeft />
+						</GazeButton>
+					</div>
+					
+					<div className="p-6 flex flex-col items-center justify-center">
+						<div className="flex items-start gap-10 mb-8 w-full max-w-5xl">
+							{/* Ảnh bên trái */}
+							<img
+								src={novel.thumbnail}
+								alt={novel.title}
+								className="w-96 h-auto object-cover rounded-lg shadow-lg"
+							/>
 
-						{/* <p className="text-lg text-gray-700 max-w-2xl text-center">
-							{novel.description}
-						</p> */}
-
+							{/* Nội dung bên phải */}
+							<div className="flex-1 flex flex-col">
+								<h1 className="text-4xl font-bold mb-4 text-black text-left">
+									{novel.title}
+								</h1>
+								<p className="text-lg text-black mb-6 mt-6 text-left">
+									{novel.description.length > 500
+										? novel.description.slice(0, 500) + "..."
+										: novel.description}
+								</p>
+								
+							</div>
+						</div>
 						<GazeButton
 							onClick={() => setIsReading(true)}
-							className="px-8 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl rounded-lg hover:bg-gray-300"
+							className="px-10 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl w-fit"
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 						>
@@ -261,8 +277,36 @@ export default function NovelReaderPage() {
 						</GazeButton>
 					</div>
 
+
+
+					{/* <motion.div
+						initial={false}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.5 }}
+						className="max-w-4xl mx-auto"
+					>
+						{/* {renderGutenbergHeader()} */}
+
+					{/* <div className="flex flex-col items-center my-16 gap-6 mb-8">
+							<motion.img
+								src={novel.thumbnail}
+								alt={novel.title}
+								className="w-64 h-96 object-cover rounded-lg shadow-xl"
+								whileHover={{ scale: 1.03 }}
+							/>
+							<GazeButton
+								onClick={() => setIsReading(true)}
+								className="px-8 py-6 bg-gray-200 rounded-lg hover:bg-gray-300 text-black text-xl rounded-lg hover:bg-gray-300"
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
+								Start Reading
+							</GazeButton>
+						</div> */}
+
 					{/* {renderGutenbergFooter()} */}
-				</motion.div>
+					{/* </motion.div> */}
+				</div>
 			) : (
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -270,7 +314,7 @@ export default function NovelReaderPage() {
 					transition={{ duration: 0.5 }}
 				>
 					{/* Back Button */}
-						<div className="max-w-4xl ml-8 mb-6 fixed justify-start">
+					<div className="max-w-4xl ml-8 mb-6 fixed justify-start">
 						<GazeButton
 							whileHover={{ scale: 1.2 }}
 							whileTap={{ scale: 0.9 }}
@@ -282,7 +326,7 @@ export default function NovelReaderPage() {
 							<AiOutlineLeft />
 						</GazeButton>
 					</div>
-						
+
 					{renderReadingContent()}
 				</motion.div>
 			)}

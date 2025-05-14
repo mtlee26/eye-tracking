@@ -2,10 +2,11 @@
 import { useEffect, useState } from "react";
 import BooksList from "@/component/book/booksList";
 import GazeButton from "@/component/gazeButton";
-import { s } from "framer-motion/client";
 import Search from "@/component/search";
 import { AiOutlineLeft } from "react-icons/ai";
 import { FiSearch } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FaHome } from "react-icons/fa";
 
 interface Book {
 	id: string;
@@ -29,6 +30,7 @@ const DEFAULT_CATEGORIES = [
 ];
 
 export default function BooksPage() {
+	const router = useRouter();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [books, setBooks] = useState<Book[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -46,13 +48,50 @@ export default function BooksPage() {
 			try {
 				const query = selectedCategory || "Novel";
 				if (query === "Comics") {
-					const response = await fetch(
-						`https://api.mangadex.org/manga?limit=20&order[followedCount]=desc&includes[]=cover_art`
+					// // const response = await fetch(
+					// // 	`https://api.mangadex.org/manga?limit=20&order[relevance]=desc&includes[]=cover_art`
+					// // );
+					// const response = await fetch(
+					// 	`https://api.mangadex.org/manga?limit=20&title=doraemon&includes[]=cover_art`
+					//   );
+					const doraemonRes = await fetch(
+						`https://api.mangadex.org/manga?limit=10&title=doraemon&includes[]=cover_art`
 					);
-					const data = await response.json();
+					const doraemonData = await doraemonRes.json();
+
+					const popularRes = await fetch(
+						`https://api.mangadex.org/manga?limit=30&order[followedCount]=desc&includes[]=cover_art`
+					);
+					const popularData = await popularRes.json();
+
+					const combined = [...doraemonData.data, ...popularData.data];
+					shuffle(combined);
+
+					const MAX_WORD_COUNT = 8;
+
+					const data = combined.filter(manga => {
+						// const titleObj = manga.attributes?.title || manga.attributes?.altTitles?.find((alt: any) => alt?.en);
+						// const title = titleObj?.en || titleObj?.ja || Object.values(titleObj || {})[0] || '';
+						const titleObj = manga.attributes?.title;
+						let title = titleObj?.en;
+
+						// Nếu không có title en, lấy từ altTitles
+						if (!title) {
+							title = manga.attributes?.altTitles?.find((alt: any) => alt?.en)?.en;
+						}
+
+						// Nếu không có title en hay altTitles, sử dụng title mặc định từ các ngôn ngữ khác
+						if (!title) {
+							title = titleObj?.ja || Object.values(titleObj || {})[0] || 'No title available';
+						}
+
+						const wordCount = title.trim().split(/\s+/).length;
+						return wordCount <= MAX_WORD_COUNT;
+					});
+					// const data = await response.json();
 					console.log(data)
 
-					const processedBooks = data?.data?.map((manga: any) => {
+					const processedBooks = data?.map((manga: any) => {
 						const id = manga.id;
 						const attributes = manga.attributes;
 						let title = attributes?.title?.en;
@@ -118,6 +157,13 @@ export default function BooksPage() {
 		setCurrentIndex(0); // Reset pagination khi đổi category
 	};
 
+	function shuffle(array: any[]) {
+		for (let i = array.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[array[i], array[j]] = [array[j], array[i]];
+		}
+	}
+
 	// Pagination controls
 	const goToNext = () => {
 		if (currentIndex + booksPerPage < books.length) {
@@ -165,27 +211,20 @@ export default function BooksPage() {
 		<div className="container mx-auto px-4 py-8">
 			{/* <Search /> */}
 			{/* Search Box (gaze vào sẽ mở bàn phím) */}
-			<div className="mb-6">
-				{/* <div className="flex gap-4 items-center">
-					<GazeButton
-						onClick={() => setShowKeyboard(true)}
-						className="flex-1 px-4 py-2 rounded-md bg-[#2c2d34] text-left text-white placeholder-gray-400 text-xl"
-					>
-						{searchQuery || "Gaze here to search..."}
-					</GazeButton>
 
-					<GazeButton
-						onClick={() => {
-							setSearchTerm(searchQuery);
-							setCurrentIndex(0);
-						}}
-						className="px-4 py-2 rounded-lg bg-gray-600 text-white font-semibold shadow-md"
-					>
-						Search
-					</GazeButton>
-				</div>
-				 */}
-				<div className="flex gap-4 items-center w-full max-w-4xl mx-auto">
+			<GazeButton
+				whileHover={{ scale: 1.2 }}
+				whileTap={{ scale: 0.9 }}
+				onClick={() => router.push("/")}
+
+				className={`absolute top-5 left-10 p-8 rounded-full bg-gray-200 text-black text-5xl shadow-lg transform transition-transform duration-300 hover:scale-110 ${"hover:shadow-xl"
+					} active:scale-95`}
+			>
+				< FaHome />
+			</GazeButton>
+			<div className="mb-6">
+
+				<div className="flex gap-8 items-center w-full max-w-4xl mx-auto">
 					{/* Ô nhập bằng ánh mắt */}
 					<GazeButton
 						onClick={() => setShowKeyboard(true)}
@@ -203,13 +242,15 @@ export default function BooksPage() {
 							handleSearch();
 							setShowKeyboard(false)
 						}}
-						className="flex items-center gap-6 px-5 py-3 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xl shadow-md transition"
+						className="flex items-center gap-6 px-5 py-3 rounded-md bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xl shadow-md transition"
 					>
 						<FiSearch className="text-white text-xl" />
 						Search
 					</GazeButton>
 				</div>
 			</div>
+
+
 
 			{showKeyboard && (
 				<div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-90 flex flex-col items-center justify-center space-y-4 p-4">
