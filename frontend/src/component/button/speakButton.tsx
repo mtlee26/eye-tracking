@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GazeButton from "./gazeButton";
+import GazeButton from "../gazeButton";
 import { BsStopFill, BsFillVolumeUpFill } from "react-icons/bs";
 
 export default function SpeakButton({ text }: { text: string }) {

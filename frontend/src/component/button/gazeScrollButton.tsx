@@ -1,5 +1,5 @@
 import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
-import GazeButton from "./gazeButton";
+import GazeButton from "../gazeButton";
 import { useState, useEffect } from "react";
 
 export function GazeScrollButton({

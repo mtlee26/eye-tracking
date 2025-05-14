@@ -1,6 +1,6 @@
 // component/AutoScrollToggle.tsx
 import { AiOutlinePause, AiOutlinePlayCircle } from "react-icons/ai";
-import GazeButton from "./gazeButton";
+import GazeButton from "../gazeButton";
 import { useEffect, useRef, useState } from "react";
 
 function useAutoScroll(speed = 1) {

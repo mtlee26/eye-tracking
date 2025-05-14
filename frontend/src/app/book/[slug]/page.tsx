@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import GazeButton from "@/component/button/gazeButton";
+import GazeButton from "@/component/gazeButton";
 import { AiOutlineLeft } from "react-icons/ai";
 import { GazeScrollButton } from "@/component/button/gazeScrollButton";
 import AutoScrollToggle from "@/component/button/autoScrollButton";

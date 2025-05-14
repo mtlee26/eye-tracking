@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import BooksList from "@/component/book/booksList";
-import GazeButton from "@/component/button/gazeButton";
+import GazeButton from "@/component/gazeButton";
 import { s } from "framer-motion/client";
 import Search from "@/component/search";
 import { AiOutlineLeft } from "react-icons/ai";

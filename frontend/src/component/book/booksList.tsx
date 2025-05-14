@@ -3,7 +3,7 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { motion } from "framer-motion";
 // import SearchBar from "./SearchBar";
 import BookCard from "./bookCard";
-import GazeButton from "../button/gazeButton";
+import GazeButton from "../gazeButton";
 // import MainLayout from "./mainLayout";
 import Image from "next/image";
 

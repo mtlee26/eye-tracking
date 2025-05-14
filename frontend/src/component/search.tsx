@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GazeButton from "./button/gazeButton";
+import GazeButton from "./gazeButton";
 
 export default function Search () {
 	const layout = [
