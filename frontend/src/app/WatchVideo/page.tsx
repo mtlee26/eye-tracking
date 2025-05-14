@@ -132,7 +132,7 @@ export default function VideoLearning() {
     <div className="flex min-h-screen bg-gray-100 p-6">
       <div className="flex-1 bg-white rounded-xl shadow-lg p-6">
         <h1 className="text-4xl font-bold text-blue-700 mb-8 text-center">
-          LET WATCH YOUTUBE
+          Khám Phá Video Youtube
         </h1>
 
         <form onSubmit={handleSearch} className="mb-6 space-y-4">
