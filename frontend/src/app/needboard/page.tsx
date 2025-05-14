@@ -13,7 +13,7 @@
 //     </Layout>
 // src/app/needboard/page.tsx
 // src/app/needboard/page.tsx
-import NeedBoard from "@/component/needboard/NeedBoard"; // Đặt tên rõ ràng
+import NeedBoard from "@/component/needboard/NeedBoard"; 
 import Layout from "@/component/layout/layout";
 
 export default function NeedBoardPage() {

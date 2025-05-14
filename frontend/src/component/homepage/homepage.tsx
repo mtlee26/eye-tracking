@@ -7,7 +7,7 @@ const features = [
   {
     name: "Lướt Web",
     icon: "🌐", // Hoặc đường dẫn tới file ảnh: "/assets/icons/web.svg"
-    path: "/web-browsing",
+    path: "/WatchVideo",
     bgColor: "bg-blue-500", // Tailwind class
     textColor: "text-white",
   },
