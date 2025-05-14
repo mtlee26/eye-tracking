@@ -35,6 +35,7 @@ export default function VideoLearning() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const useDebounce = (value: string, delay: number) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
@@ -104,11 +105,11 @@ export default function VideoLearning() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // No need to call fetchVideos here, handled by useEffect
   };
 
   const handleVideoClick = (lesson: VideoLessonType) => {
     setSelectedVideoId(lesson.id);
+    setIsVideoPlaying(false);
 
     const updatedRecent = [
       lesson,
@@ -120,11 +121,12 @@ export default function VideoLearning() {
 
   const closeModal = () => {
     setSelectedVideoId(null);
+    setIsVideoPlaying(false);
   };
 
   const [hoveredElement, setHoveredElement] = useState<string | null>(null);
   const [progress, setProgress] = useState<Record<string, number>>({});
-  const AUTO_CLICK_DELAY = 2000; // 3 seconds
+  const AUTO_CLICK_DELAY = 2000;
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const selectKey = (char: string) => {
@@ -160,9 +162,19 @@ export default function VideoLearning() {
 
       if (elapsed >= AUTO_CLICK_DELAY) {
         if (hoveredElement === "searchInput") {
-          setShowKeyboard(true); // Auto-open keyboard when hovering input
+          setShowKeyboard(true);
         } else if (hoveredElement === "searchButton") {
-          handleSearch(new Event("submit") as any); // Auto-submit form
+          handleSearch(new Event("submit") as any);
+        } else if (hoveredElement.startsWith("video-")) {
+          const videoId = hoveredElement.replace("video-", "");
+          const lesson = [...videoLessons, ...recentVideos].find(
+            (v) => v.id === videoId
+          );
+          if (lesson) handleVideoClick(lesson);
+        } else if (hoveredElement === "closeModal") {
+          closeModal();
+        } else if (hoveredElement === "playVideo" && !isVideoPlaying) {
+          setIsVideoPlaying(true);
         } else if (hoveredElement === "delete") {
           deleteKey();
         } else if (hoveredElement === "close") {
@@ -185,7 +197,7 @@ export default function VideoLearning() {
         intervalRef.current = null;
       }
     };
-  }, [hoveredElement]);
+  }, [hoveredElement, videoLessons, recentVideos, isVideoPlaying]);
 
   return (
     <div className="flex min-h-screen bg-gray-100 p-6">
@@ -204,17 +216,16 @@ export default function VideoLearning() {
                 id="search"
                 type="text"
                 value={searchInput}
-                onClick={() => setShowKeyboard(true)}
-                onChange={(e) => setSearchInput(e.target.value)}
                 onMouseEnter={() => setHoveredElement("searchInput")}
                 onMouseLeave={() => setHoveredElement(null)}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search for videos..."
                 className="flex-1 text-lg bg-transparent outline-none px-4 py-3 hover:scale-105 hover:bg-gray-300 transition-transform duration-300 w-full"
                 style={{ fontSize: "1.25rem" }}
               />
               {hoveredElement === "searchInput" && (
                 <div
-                  className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-50"
+                  className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
                   style={{
                     width: `${progress["searchInput"] || 0}%`,
                   }}
@@ -232,7 +243,7 @@ export default function VideoLearning() {
               </button>
               {hoveredElement === "searchButton" && (
                 <div
-                  className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-50"
+                  className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
                   style={{
                     width: `${progress["searchButton"] || 0}%`,
                   }}
@@ -242,7 +253,7 @@ export default function VideoLearning() {
           </div>
 
           {showKeyboard && (
-            <div className="fixed bottom-10 left-0 right-0 bg-gray-800 p-4 rounded-lg shadow-lg grid grid-cols-10 gap-2">
+            <div className="fixed bottom-10 left-0 right-0 bg-gray-800 p-4 rounded-lg shadow-lg grid grid-cols-10 gap-2 z-60">
               {"abcdefghijklmnopqrstuvwxyz ".split("").map((char, indexkb) => (
                 <div
                   key={`key-${indexkb}`}
@@ -254,13 +265,12 @@ export default function VideoLearning() {
                 >
                   <button
                     className="p-4 bg-gray-600 text-white rounded-lg hover:bg-gray-500 hover:scale-105 transition-transform duration-300 w-full"
-                    onClick={() => selectKey(char)}
                   >
                     {char === " " ? "Space" : char}
                   </button>
                   {hoveredElement === (char === " " ? "Space" : char) && (
                     <div
-                      className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-50"
+                      className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
                       style={{
                         width: `${progress[char === " " ? "Space" : char] || 0}%`,
                       }}
@@ -275,13 +285,12 @@ export default function VideoLearning() {
               >
                 <button
                   className="p-4 bg-yellow-600 text-white rounded-lg hover:bg-yellow-500 hover:scale-105 transition-transform duration-300 w-full"
-                  onClick={deleteKey}
                 >
                   Xóa
                 </button>
                 {hoveredElement === "delete" && (
                   <div
-                    className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-50"
+                    className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50"
                     style={{
                       width: `${progress["delete"] || 0}%`,
                     }}
@@ -295,13 +304,12 @@ export default function VideoLearning() {
               >
                 <button
                   className="p-4 bg-red-600 text-white rounded-lg hover:bg-red-500 hover:scale-105 transition-transform duration-300 w-full"
-                  onClick={closeKeyboard}
                 >
                   Đóng
                 </button>
                 {hoveredElement === "close" && (
                   <div
-                    className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-50"
+                    className="absolute bottom-0 left-0 h-1 bg-red-800 transition-all duration-50"
                     style={{
                       width: `${progress["close"] || 0}%`,
                     }}
@@ -309,23 +317,6 @@ export default function VideoLearning() {
                 )}
               </div>
             </div>
-          )}
-
-          {suggestions.length > 0 && (
-            <ul className="bg-white border rounded mt-2 shadow text-lg max-h-64 overflow-auto">
-              {suggestions.map((s, indexsg) => (
-                <li
-                  key={`suggestion-${indexsg}`}
-                  onClick={() => {
-                    setSearchInput(s);
-                    setSearchQuery(s);
-                  }}
-                  className="cursor-pointer px-6 py-4 hover:bg-blue-100 hover:scale-105 transition-transform duration-300"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
           )}
         </form>
 
@@ -345,8 +336,9 @@ export default function VideoLearning() {
                     videoLessons.map((lesson) => (
                       <div
                         key={lesson.id}
-                        className="bg-gray-200 rounded-lg shadow-md cursor-pointer hover:scale-105 hover:bg-gray-300 transition-all duration-300"
-                        onClick={() => handleVideoClick(lesson)}
+                        className="relative bg-gray-200 rounded-lg shadow-md cursor-pointer hover:scale-105 hover:bg-gray-300 transition-all duration-300"
+                        onMouseEnter={() => setHoveredElement(`video-${lesson.id}`)}
+                        onMouseLeave={() => setHoveredElement(null)}
                       >
                         <img
                           src={lesson.thumbnail}
@@ -354,11 +346,19 @@ export default function VideoLearning() {
                           className="w-full h-48 object-cover rounded-t-lg"
                         />
                         <div className="p-4">
-                          <h3 className="text-xl font-semibold text-blue-700">
+                          <h3 className="text-xl font-semibold text-gray-700">
                             {lesson.title}
                           </h3>
                           <p className="text-sm text-gray-600">{lesson.channel}</p>
                         </div>
+                        {hoveredElement === `video-${lesson.id}` && (
+                          <div
+                            className="absolute bottom-0 left-0 h-1 bg-gray-500 transition-all duration-50 w-full"
+                            style={{
+                              width: `${progress[`video-${lesson.id}`] || 0}%`,
+                            }}
+                          />
+                        )}
                       </div>
                     ))
                   )}
@@ -375,8 +375,9 @@ export default function VideoLearning() {
                   {recentVideos.map((lesson) => (
                     <div
                       key={lesson.id}
-                      className="bg-gray-200 rounded-lg shadow-md cursor-pointer hover:scale-105 hover:bg-gray-300 transition-all duration-300"
-                      onClick={() => handleVideoClick(lesson)}
+                      className="relative bg-gray-200 rounded-lg shadow-md cursor-pointer hover:scale-105 hover:bg-gray-300 transition-all duration-300"
+                      onMouseEnter={() => setHoveredElement(`video-${lesson.id}`)}
+                      onMouseLeave={() => setHoveredElement(null)}
                     >
                       <img
                         src={lesson.thumbnail}
@@ -384,11 +385,19 @@ export default function VideoLearning() {
                         className="w-full h-48 object-cover rounded-t-lg"
                       />
                       <div className="p-4">
-                        <h3 className="text-xl font-semibold text-blue-700">
+                        <h3 className="text-xl font-semibold text-gray-700">
                           {lesson.title}
                         </h3>
                         <p className="text-sm text-gray-600">{lesson.channel}</p>
                       </div>
+                      {hoveredElement === `video-${lesson.id}` && (
+                        <div
+                          className="absolute bottom-0 left-0 h-1 bg-gray-500 transition-all duration-50 w-full"
+                          style={{
+                            width: `${progress[`video-${lesson.id}`] || 0}%`,
+                          }}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -405,22 +414,49 @@ export default function VideoLearning() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-transparent p-0 rounded-none shadow-none w-full max-w-6xl">
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 text-gray-600 hover:text-white transition-colors"
-                style={{ fontSize: "3rem", padding: "1rem 1.5rem" }}
-              >
-                ×
-              </button>
-              <iframe
-                className="w-full h-[70vh] sm:h-[80vh] object-cover rounded-lg"
-                src={`https://www.youtube.com/embed/${selectedVideoId}`}
-                title="Video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+            <div className="relative bg-transparent p-0 rounded-none shadow-none w-full max-w-6xl">
+              <div className="absolute top-4 right-4 z-50">
+                <div className="relative">
+                  <button
+                    onMouseEnter={() => setHoveredElement("closeModal")}
+                    onMouseLeave={() => setHoveredElement(null)}
+                    className="text-gray-600 hover:text-white bg-red-600 rounded-full transition-colors"
+                    style={{ fontSize: "3rem", padding: "0.5rem 1rem" }}
+                  >
+                    ×
+                  </button>
+                  {hoveredElement === "closeModal" && (
+                    <div
+                      className="absolute bottom-0 left-0 h-1 bg-red-800 transition-all duration-50 w-full"
+                      style={{
+                        width: `${progress["closeModal"] || 0}%`,
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="relative">
+                <iframe
+                  className="w-full h-[70vh] sm:h-[80vh] object-cover rounded-lg"
+                  src={`https://www.youtube.com/embed/${selectedVideoId}${
+                    isVideoPlaying ? "?autoplay=1" : ""
+                  }`}
+                  title="Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  onMouseEnter={() => setHoveredElement("playVideo")}
+                  onMouseLeave={() => setHoveredElement(null)}
+                />
+                {hoveredElement === "playVideo" && !isVideoPlaying && (
+                  <div
+                    className="absolute bottom-0 left-0 h-1 bg-red-600 transition-all duration-50 w-full"
+                    style={{
+                      width: `${progress["playVideo"] || 0}%`,
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </motion.div>
         )}
