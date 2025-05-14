@@ -5,6 +5,7 @@ import GazeButton from "@/component/gazeButton";
 import { s } from "framer-motion/client";
 import Search from "@/component/search";
 import { AiOutlineLeft } from "react-icons/ai";
+import { FiSearch } from "react-icons/fi";
 
 interface Book {
 	id: string;
@@ -133,7 +134,7 @@ export default function BooksPage() {
 	const handleSearch = async () => {
 		console.log(searchQuery)
 		setSearchTerm(searchQuery);
-		console.log(searchTerm)
+		setSelectedCategory(null);
 		const response = await fetch(
 			`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(searchQuery)}&maxResults=40`
 		);
@@ -165,10 +166,7 @@ export default function BooksPage() {
 			{/* <Search /> */}
 			{/* Search Box (gaze vào sẽ mở bàn phím) */}
 			<div className="mb-6">
-				<label className="block text-white text-xl font-semibold mb-2">
-					Search Books
-				</label>
-				<div className="flex gap-4 items-center">
+				{/* <div className="flex gap-4 items-center">
 					<GazeButton
 						onClick={() => setShowKeyboard(true)}
 						className="flex-1 px-4 py-2 rounded-md bg-[#2c2d34] text-left text-white placeholder-gray-400 text-xl"
@@ -183,6 +181,31 @@ export default function BooksPage() {
 						}}
 						className="px-4 py-2 rounded-lg bg-gray-600 text-white font-semibold shadow-md"
 					>
+						Search
+					</GazeButton>
+				</div>
+				 */}
+				<div className="flex gap-4 items-center w-full max-w-4xl mx-auto">
+					{/* Ô nhập bằng ánh mắt */}
+					<GazeButton
+						onClick={() => setShowKeyboard(true)}
+						className="flex items-center gap-2 flex-1 px-5 py-3 rounded-md bg-[#2c2d34] text-white text-xl shadow-inner hover:shadow-md transition"
+					>
+						<FiSearch className="text-gray-400 text-2xl" />
+						<span className={`${searchQuery ? "" : "text-gray-400"}`}>
+							{searchQuery || "Gaze here to search..."}
+						</span>
+					</GazeButton>
+
+					{/* Nút Search */}
+					<GazeButton
+						onClick={() => {
+							handleSearch();
+							setShowKeyboard(false)
+						}}
+						className="flex items-center gap-6 px-5 py-3 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xl shadow-md transition"
+					>
+						<FiSearch className="text-white text-xl" />
 						Search
 					</GazeButton>
 				</div>
@@ -203,7 +226,7 @@ export default function BooksPage() {
 						</GazeButton>
 					</div>
 					{/* Thanh hiển thị nội dung đã nhập */}
-					<div className="w-full max-w-4xl bg-white text-black rounded-md  py-3 text-xl text-left shadow-md mb-16">
+					<div className="w-full max-w-4xl bg-white text-black rounded-md  p-3 text-xl text-left shadow-md mb-16">
 						{searchQuery || <span className="text-gray-400">Start typing by looking at keys...</span>}
 					</div>
 					<div className="grid grid-cols-9 gap-4">
