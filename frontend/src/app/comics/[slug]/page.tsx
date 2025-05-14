@@ -231,7 +231,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { motion } from "framer-motion";
-import GazeButton from "@/component/gazeButton";
+import GazeButton from "@/component/button/gazeButton";
 
 type Manga = {
 	id: string;

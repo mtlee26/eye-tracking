@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import GazeButton from "@/component/gazeButton";
+import GazeButton from "@/component/button/gazeButton";
 import { AiOutlineLeft } from "react-icons/ai";
-import { GazeScrollButton } from "@/component/gazeScrollButton";
-import AutoScrollToggle from "@/component/autoScrollButton";
-import SpeakButton from "@/component/speakButton";
+import { GazeScrollButton } from "@/component/button/gazeScrollButton";
+import AutoScrollToggle from "@/component/button/autoScrollButton";
+import SpeakButton from "@/component/button/speakButton";
 
 type Chapter = {
 	id: string;

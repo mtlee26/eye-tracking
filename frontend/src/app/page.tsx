@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import GazeButton from "@/component/gazeButton"; // Nút điều khiển bằng mắt (tuỳ chỉnh riêng)
+import GazeButton from "@/component/button/gazeButton"; // Nút điều khiển bằng mắt (tuỳ chỉnh riêng)
 
 export default function HomePage() {
 	const router = useRouter();

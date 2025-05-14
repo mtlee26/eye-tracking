@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import axios from "axios";
 import { motion } from "framer-motion";
-import GazeButton from "@/component/gazeButton";
+import GazeButton from "@/component/button/gazeButton";
 
 interface ChapterImage {
 	id: string;
