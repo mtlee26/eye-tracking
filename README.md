@@ -1,5 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
+# EYEPAL – Ứng dụng hỗ trợ và giải trí cho người dùng điều khiển bằng mắt
+## Thành viên nhóm gồm có:
+•	Lê Thị Minh Tâm – 22028322
+•	Đào Thị Thu Hường – 22028292
+•	Trương Thị Xuân Sang – 22028201
+•	Nguyễn Thu Hà – 22028282
+## Đối tượng 
+Ứng dụng EyePal chủ yếu được thiết kế dành cho người khuyết tật vận động, bao gồm
+những cá nhân không thể sử dụng tay hoặc chân do các nguyên nhân bẩm sinh, tai nạn
+hoặc bệnh lý. EyePal cung cấp một công cụ giải trí và giáo dục tiên tiến, cho phép họ
+tham gia vào các hoạt động như chơi trò chơi, học tập tương tác hoặc đọc truyện một
+cách dễ dàng và độc lập thông qua điều khiển bằng chuyển động mắt, từ đó cải thiện sức
+khỏe tinh thần và tăng cường kết nối xã hội.
 ## Getting Started
 
 First, run the development server:
