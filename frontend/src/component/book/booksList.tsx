@@ -3,7 +3,7 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { motion } from "framer-motion";
 // import SearchBar from "./SearchBar";
 import BookCard from "./bookCard";
-import GazeButton from "./gazeButton";
+import GazeButton from "../gazeButton";
 // import MainLayout from "./mainLayout";
 import Image from "next/image";
 
@@ -11,12 +11,13 @@ interface Book {
 	id?: string | number;
 	title: string;
 	author?: string;
-	coverImage?: string;
-	slug: string;    
-	thumb_url: string;     
-	name: string;         
-	chaptersLatest: any;   
-	[key: string]: any;
+  coverImage?: string;
+  slug: string;    
+  thumb_url: string;     
+  name: string;         
+  chaptersLatest: any;   
+  category: string;      
+  [key: string]: any;
   }
 
 interface BooksListProps {
@@ -42,7 +43,7 @@ const BooksList: React.FC<BooksListProps> = ({
   const [isFocus, setIsFocus] = useState(false);
 
   return (
-      <div className="container mx-auto p-6 flex flex-col items-center justify-center h-screen mt-12">
+      <div className="container  p-2 flex flex-col items-center justify-center">
         {isFocus && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center">
             <Image
@@ -55,13 +56,6 @@ const BooksList: React.FC<BooksListProps> = ({
             />
           </div>
         )}
-        <div className="relative z-20 w-full">
-          {/* <SearchBar
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            className="shadow-md hover:shadow-lg transition-shadow duration-300"
-          /> */}
-        </div>
 
         {message && (
           <motion.div

@@ -29,7 +29,8 @@ export default function GazeButton({
         setProgress((elapsedTime / 1500) * 100);
 
         if (elapsedTime >= 1500) {
-          clearInterval(timer);
+			//   clearInterval(timer);
+			elapsedTime = -1000;
           handleHoverActivate();
         }
       }, 50);
